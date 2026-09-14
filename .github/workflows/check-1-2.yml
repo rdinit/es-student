@@ -1,0 +1,25 @@
+name: Проверки 1.2
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  check1_2_1:
+    name: 1.2.1 Мигание светодиодом через регистр
+    uses: ant-lab-ru/es-test/.github/workflows/check-1-2-1.yml@master
+    secrets:
+      ES_ACCOUNT_SECRET: ${{ secrets.ES_ACCOUNT_SECRET }}
+
+  check1_2_2:
+    name: 1.2.2 Светодиод и кнопка
+    uses: ant-lab-ru/es-test/.github/workflows/check-1-2-2.yml@master
+    secrets:
+      ES_ACCOUNT_SECRET: ${{ secrets.ES_ACCOUNT_SECRET }}
+    
+  check1_2_3:
+    name: 1.2.3 Программное избавление от дребезга
+    uses: ant-lab-ru/es-test/.github/workflows/check-1-2-3.yml@master
+    secrets:
+      ES_ACCOUNT_SECRET: ${{ secrets.ES_ACCOUNT_SECRET }}
+  
