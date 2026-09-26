@@ -3,15 +3,10 @@
 #include "hardware/gpio.h"
 #include "led.h"
 
-// const uint LED_PIN = 25;
-
 // добавляем заголовочный файл функций ввода-вывода
 // добавляем заголовочный файл функций работы с GPIO
 
-// объявляем константу вывода светодиода
 const uint BUTTON_PIN = 15;
-
-
 const uint DEBOUNCE_MS = 20;
 
 bool get_button_debounce(uint pin)
