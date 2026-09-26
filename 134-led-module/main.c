@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
+#include "led.h"
 
-
-const uint LED_PIN = 25;
+// const uint LED_PIN = 25;
 
 // добавляем заголовочный файл функций ввода-вывода
 // добавляем заголовочный файл функций работы с GPIO
@@ -21,19 +21,31 @@ bool get_button_debounce(uint pin)
     return state && gpio_get(pin);
 }
 
-void set_led(bool on)
+void handle_command(int command)
 {
-    gpio_put(LED_PIN, on);
-    printf("led %s\n", on ? "on" : "off");
+    if (command == 'e')
+    {
+        led_set(true);
+        printf("led %s\n", led_is_on() ? "on" : "off");
+    }
+    else if (command == 'd')
+    {
+        led_set(false);
+        printf("led %s\n", led_is_on() ? "on" : "off");
+    }
+    else
+    {
+        printf("unknown command: %c\n", command);
+    }
 }
+
 
 int main()
 {
     // инициализируем пин светодиода
     // настраиваем пин светодиода на выход
     stdio_init_all();
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
+    led_init();
 
     gpio_init(BUTTON_PIN);
     gpio_set_dir(BUTTON_PIN, GPIO_IN);
@@ -48,10 +60,19 @@ int main()
 
         if (previous == true && current == false)
         {
-            led = !led;
-            set_led(led);
+            led_toggle();
+            printf("led %s\n", led_is_on() ? "on" : "off");
         }
 
         previous = current;
+
+        int command = getchar_timeout_us(0);
+
+        if (command == PICO_ERROR_TIMEOUT)
+        {
+            continue;
+        }
+
+        handle_command(command);
     }
 }
