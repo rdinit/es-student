@@ -1,0 +1,23 @@
+задание: 2.1.1
+проект: 211-command-usb
+устройство: 2e8a:000a
+серийный номер: E66358986372252C
+порт: COM7
+начало: 2026-10-12T15:18:14
+   0.000 --> enable
+   0.125 <-- enable
+   0.125 <-- dbg read_line:55 got enable
+   0.125 <-- inf handle_command:30 led on
+   2.171 --> disable
+   2.328 <-- disable
+   2.328 <-- dbg read_line:55 got disable
+   2.328 <-- inf handle_command:33 led off
+   4.359 --> info
+   4.468 <-- info
+   4.468 <-- dbg read_line:55 got info
+   4.468 <-- device: es-led-module 1.0.0, built Oct 12 2026 15:12:59, log level 3
+   6.500 --> nosuchcommand
+   6.781 <-- nosuchcommand
+   6.781 <-- dbg read_line:55 got nosuchcommand
+   6.781 <-- err handle_command:39 unknown command: �
+итог: отправлено команд 4, принято строк 12
