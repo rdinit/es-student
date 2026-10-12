@@ -32,11 +32,11 @@ void handle_command(const char *command) {
     led_set(false);
     LOG_INF("led %s\n", led_is_on() ? "on" : "off");
   } else if (strcmp(command, "info") == 0) {
-    log_version();
-  } else if (strcmp(command, "version") == 0) {
     device_info();
+  } else if (strcmp(command, "version") == 0) {
+    log_version();
   } else {
-    LOG_ERR("unknown command: %c\n", command);
+    LOG_ERR("unknown command: %s\n", command);
   }
 }
 
