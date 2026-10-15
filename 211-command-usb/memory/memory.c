@@ -24,7 +24,7 @@ static void row(const char *name, uintptr_t start, uintptr_t end)
            name, (unsigned)start, (unsigned)end, (unsigned)(end - start));
 }
 
-#define SRAM_SIZE (256u * 1024u)
+#define SRAM_SIZE (264u * 1024u)
 #define ROM_SIZE (16u * 1024u)
 
 void mem_info(void)
@@ -59,11 +59,17 @@ void mem_info(void)
     uintptr_t rom_end     = ROM_BASE + ROM_SIZE;
 
 
-    uintptr_t data_flash_start = (uintptr_t)&__etext;
-
     uintptr_t dat_sz  = (uintptr_t)&__data_end__ - (uintptr_t)&__data_start__;
+    uintptr_t bss_sz  = (uintptr_t)&__bss_end__ - (uintptr_t)&__bss_start__;
+    uintptr_t b2_sz   = (uintptr_t)&__boot2_end__ - (uintptr_t)&__boot2_start__;
+    uintptr_t txt_sz  = (uintptr_t)&__etext - (uintptr_t)&__boot2_end__;
+    uintptr_t heap_sz = (uintptr_t)&__HeapLimit - (uintptr_t)&__bss_end__;
+    uintptr_t stk_sz  = (uintptr_t)&__StackTop - (uintptr_t)&__StackBottom;
+    
+    uintptr_t data_flash_start = (uintptr_t)&__etext;
     uintptr_t data_flash_end = data_flash_start + dat_sz;
-
+    
+    printf("area       start      end        size\n");
     row("flash", flash_start, flash_end);
     row("sram", sram_start, sram_end);
     row("rom", rom_start, rom_end);
@@ -79,5 +85,16 @@ void mem_info(void)
     row("heap", (uintptr_t)&__bss_end__, (uintptr_t)&__HeapLimit);
     row("stack", (uintptr_t)&__StackBottom, (uintptr_t)&__StackTop);
 
-
+    printf("\ntotal\n");
+    printf("  flash image  %7u = boot2 %u + text %u + data %u\n",
+           (unsigned)(b2_sz + txt_sz + dat_sz),
+           (unsigned)b2_sz, (unsigned)txt_sz, (unsigned)dat_sz);
+    printf("  flash free   %7u of %u\n",
+           (unsigned)(flash_end - (uintptr_t)&__flash_binary_end),
+           (unsigned)(flash_end - flash_start));
+    printf("  ram used     %7u = data %u + bss %u\n",
+           (unsigned)(dat_sz + bss_sz),
+           (unsigned)dat_sz, (unsigned)bss_sz);
+    printf("  ram free     %7u for heap and %u for stack\n",
+           (unsigned)heap_sz, (unsigned)stk_sz);
 }
