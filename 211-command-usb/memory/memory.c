@@ -24,6 +24,9 @@ static void row(const char *name, uintptr_t start, uintptr_t end)
            name, (unsigned)start, (unsigned)end, (unsigned)(end - start));
 }
 
+#define SRAM_SIZE (256u * 1024u)
+#define ROM_SIZE (16u * 1024u)
+
 void mem_info(void)
 {
     // шапка таблицы: область, начало, конец, размер
@@ -48,13 +51,33 @@ void mem_info(void)
     // итог: занято в ОЗУ — .data и .bss
     // итог: свободно в ОЗУ — под кучу и под стек
 
+    uintptr_t flash_start = XIP_BASE;
+    uintptr_t flash_end = XIP_BASE + PICO_FLASH_SIZE_BYTES;
+    uintptr_t sram_start  = SRAM_BASE;
+    uintptr_t sram_end    = SRAM_BASE + SRAM_SIZE;
+    uintptr_t rom_start   = ROM_BASE;
+    uintptr_t rom_end     = ROM_BASE + ROM_SIZE;
+
+
+    uintptr_t data_flash_start = (uintptr_t)&__etext;
+
+    uintptr_t dat_sz  = (uintptr_t)&__data_end__ - (uintptr_t)&__data_start__;
+    uintptr_t data_flash_end = data_flash_start + dat_sz;
+
+    row("flash", flash_start, flash_end);
+    row("sram", sram_start, sram_end);
+    row("rom", rom_start, rom_end);
+
     row("image", (uintptr_t)&__flash_binary_start, (uintptr_t)&__flash_binary_end);
-    row("free", (uintptr_t)&__flash_binary_end, (uintptr_t)PICO_FLASH_SIZE_BYTES);
+    row("free", (uintptr_t)&__flash_binary_end, flash_end);
     row("boot2", (uintptr_t)&__boot2_start__, (uintptr_t)&__boot2_end__);
-    row("text", (uintptr_t)&__etext, (uintptr_t)&__data_start__);
-    row("data flash", (uintptr_t)&__etext, (uintptr_t)&__data_end__);
+    row("text", (uintptr_t)&__boot2_end__, (uintptr_t)&__etext);
+
+    row("data flash", (uintptr_t)&__etext, data_flash_end);
     row("data ram", (uintptr_t)&__data_start__, (uintptr_t)&__data_end__);
     row("bss", (uintptr_t)&__bss_start__, (uintptr_t)&__bss_end__);
     row("heap", (uintptr_t)&__bss_end__, (uintptr_t)&__HeapLimit);
     row("stack", (uintptr_t)&__StackBottom, (uintptr_t)&__StackTop);
+
+
 }
