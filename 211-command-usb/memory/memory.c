@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <command.h>
-#include <device.h>
+#include "command.h"
+#include "device.h"
 
 #include "hardware/regs/addressmap.h"
 #include "pico/stdlib.h"
@@ -147,15 +147,14 @@ heap_variable   0x20002408  1951
   printf("object          address     value\n");
 
   uint16_t *main_code = (uint16_t *)((uintptr_t)main & ~1u);
-  printf("main            0x%08x  0x%04x\n", main_code, *main_code);
+  printf("main            0x%08x  0x%04x\n", (uintptr_t)main, *main_code);
   uint16_t *fw_code = (uint16_t *)((uintptr_t)fw_info & ~1u);
-  printf("fw_info         0x%08x  0x%04x\n", fw_code, *fw_code);
+  printf("fw_info         0x%08x  0x%04x\n", (uintptr_t)fw_info, *fw_code);
   uint16_t *commands_code = (uint16_t *)((uintptr_t)commands & ~1u);
   printf("commands        0x%08x\n", (uintptr_t)commands_code);
 
-  for (int i = 0; i < command_count; i++) {
-       uint16_t *command_code = (uint16_t *)((uintptr_t)commands[i].handler & ~1u); 
-       printf("- %-13s 0x%08x\n", commands[i].name, (uintptr_t)command_code);
+  for (uint i = 0; i < command_count; i++) {
+       printf("- %-13s 0x%08x\n", commands[i].name, (uintptr_t)commands[i].handler);
   }
 
   /*\
