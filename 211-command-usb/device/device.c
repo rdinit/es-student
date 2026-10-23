@@ -48,7 +48,6 @@ void dev_info(void) {
 
   unsigned fields = sizeof(device_card.version) + sizeof(device_card.name) +
                     sizeof(device_card.revision);
-  // fields 18, sizeof 20, padding 2
   printf("fields %d, sizeof %d, padding %d\n", fields, sizeof(struct info_t),
          sizeof(struct info_t) - fields);
 }
@@ -57,10 +56,4 @@ struct info_t device_card = {
     .revision = 2,
     .version = 3,
     .name = "es-cmd-usb",
-};
-
-struct info_t {
-  uint8_t revision;
-  uint32_t version;
-  char name[13];
 };
