@@ -1,5 +1,6 @@
 #include "device.h"
 
+#include <stddef.h>
 #include <stdio.h>
 
 #include "device.h"
@@ -30,3 +31,36 @@ void device_info(void) {
          part, revision);
   printf("pico-sdk: %s\n", PICO_SDK_VERSION_STRING);
 }
+
+void dev_info(void) {
+  printf("struct          address     size offset value\n");
+  printf("%-15s 0x%08x %5u\n", "device_card", &device_card,
+         sizeof(device_card));
+  printf("- %-13s 0x%08x %5u %6u 0x%08x\n", "version", &device_card.version,
+         sizeof(device_card.version), offsetof(struct info_t, version),
+         device_card.version);
+  printf("- %-13s 0x%08x %5u %6u %s\n", "name", &device_card.name,
+         sizeof(device_card.name), offsetof(struct info_t, name),
+         device_card.name);
+  printf("- %-13s 0x%08x %5u %6u %u\n", "revision", &device_card.revision,
+         sizeof(device_card.revision), offsetof(struct info_t, revision),
+         device_card.revision);
+
+  unsigned fields = sizeof(device_card.version) + sizeof(device_card.name) +
+                    sizeof(device_card.revision);
+  // fields 18, sizeof 20, padding 2
+  printf("fields %d, sizeof %d, padding %d\n", fields, sizeof(struct info_t),
+         sizeof(struct info_t) - fields);
+}
+
+struct info_t device_card = {
+    .revision = 2,
+    .version = 3,
+    .name = "es-cmd-usb",
+};
+
+struct info_t {
+  uint8_t revision;
+  uint32_t version;
+  char name[13];
+};
