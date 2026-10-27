@@ -200,7 +200,7 @@ void boot_info(void) {
 
   volatile uint32_t *gpio_in =  (uint32_t*)0xd0000004u;
   uint32_t level = (*gpio_in >> led_pin()) & 1u;
-  printf("gpio_in        0x%08x\n", (uintptr_t)gpio_in);
+  printf("gpio in        0x%08x\n", (uintptr_t)gpio_in);
   printf("  led bit      %u\n", level);
   printf("  gpio_get     %u\n", gpio_get(led_pin()));
 
