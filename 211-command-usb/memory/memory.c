@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "command.h"
 #include "device.h"
+#include "led.h"
 
 #include "hardware/regs/addressmap.h"
 #include "pico/stdlib.h"
@@ -182,4 +183,35 @@ heap_variable   0x20002408  1951
   printf("stack_variable  0x%08x  %u\n", (uintptr_t)&stack_variable, stack_variable);
   printf("heap_variable   0x%08x  %u\n", (uintptr_t)heap_variable, *heap_variable);
   free(heap_variable);
+}
+
+#define VECTOR_TABLE 0x10000100
+
+void boot_info(void) {
+  const uint32_t *vectors = (const uint32_t *)VECTOR_TABLE;
+
+  uint32_t stack_top = vectors[0];
+  uint32_t reset_handler = vectors[1];
+
+  printf("vector table   0x%08x\n",(const uint32_t *)VECTOR_TABLE);
+  printf("  stack top    0x%08x\n", stack_top);
+  printf("  reset        0x%08x\n", (reset_handler));
+  printf("  reset (even) 0x%08x\n", (reset_handler & ~1u));
+
+  volatile uint32_t *gpio_in =  (uint32_t*)0xd0000004u;
+  uint32_t level = (*gpio_in >> led_pin()) & 1u;
+  printf("gpio_in        0x%08x\n", (uintptr_t)gpio_in);
+  printf("  led bit      %u\n", level);
+  printf("  gpio_get     %u\n", gpio_get(led_pin()));
+
+  /*
+vector table   0x10000100
+  stack top    0x20042000
+  reset        0x100001f7
+  reset (even) 0x100001f6
+gpio in        0xd0000004
+  led bit      0
+  gpio_get     0
+  
+  */
 }
