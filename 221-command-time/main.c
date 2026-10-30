@@ -7,6 +7,7 @@
 #include "led.h"
 #include "log.h"
 #include "memory.h"
+#include "profiling.h"
 #include "pico/stdlib.h"
 
 #define LINE_SIZE 32
@@ -69,6 +70,10 @@ void cmd_clk_info(void) { clk_info(); }
 
 void cmd_uptime(void) { uptime(); }
 
+void cmd_main_time_reset(void) { main_time_reset(); }
+
+void cmd_main_time_exec(void) { main_time_exec(); }
+
 struct command_t {
   const char* name;
   command_handler_t handler;
@@ -80,7 +85,10 @@ const struct command_t commands[] = {
     {"ping", cmd_ping},           {"mem_info", cmd_mem_info},
     {"fw_info", cmd_fw_info},     {"dev_info", cmd_dev_info},
     {"boot_info", cmd_boot_info}, {"clk_info", cmd_clk_info},
-    {"uptime", cmd_uptime},       {"calc_pi", cmd_calc_pi}};
+    {"uptime", cmd_uptime},       {"calc_pi", cmd_calc_pi},
+
+    {"main_time_reset", cmd_main_time_reset},
+    {"main_time_exec", cmd_main_time_exec},};
 
 const uint command_count = sizeof(commands) / sizeof(commands[0]);
 
@@ -144,8 +152,10 @@ int main() {
   // настраиваем пин светодиода на выход
   stdio_init_all();
   led_init();
+  profiling_init();
 
   while (1) {
+    profiling_iteration();
     blink();
     read_line();
   }

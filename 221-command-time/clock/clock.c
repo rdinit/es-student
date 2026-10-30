@@ -1,3 +1,4 @@
+#include "clock.h"
 #include <stdio.h>
 #include "hardware/clocks.h"
 #include "pico/stdlib.h"
