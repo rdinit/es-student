@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "hardware/clocks.h"
+#include "pico/stdlib.h"
 
 static void row(const char *name, uint32_t set_khz, uint32_t measured_khz)
 {
@@ -17,4 +18,9 @@ void clk_info() {
     row("clk_usb", clock_get_hz(clk_usb) / 1000, frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_USB));
     row("clk_adc", clock_get_hz(clk_adc) / 1000, frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_ADC));
     printf("%-8s %9s %12u\n", "rosc", "-", frequency_count_khz(CLOCKS_FC0_SRC_VALUE_ROSC_CLKSRC));
-}   
+}
+
+void uptime(void)
+{
+    printf("uptime: %llu ms\n", time_us_64() / 1000);
+}

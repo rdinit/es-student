@@ -1,10 +1,10 @@
 name: 2.2.1 Тактовые частоты
 
 on:
-  push:
-    paths:
-      - '221-command-time/**'
-      - '.github/workflows/check-2-2-1.yml'
+  # push:
+  #   paths:
+  #     - '221-command-time/**'
+  #     - '.github/workflows/check-2-2-1.yml'
   workflow_dispatch:
 
 # Пока идёт отладка, пушей подряд бывает много: в работе остаётся последний,

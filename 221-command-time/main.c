@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include "device.h"
-#include "hardware/gpio.h"
 #include "led.h"
 #include "log.h"
 #include "memory.h"
@@ -21,24 +20,8 @@ const uint DEBOUNCE_MS = 20;
 char line[LINE_SIZE];
 uint line_length = 0;
 
-bool get_button_debounce(uint pin) {
-  bool state = gpio_get(pin);
-  sleep_ms(DEBOUNCE_MS);
-  return state && gpio_get(pin);
-}
 
 
-void cmd_enable(void) {
-  // включаем светодиод и сообщаем новое состояние
-  led_set(true);
-  LOG_INF("led %s\n", led_is_on() ? "on" : "off");
-}
-
-void cmd_disable(void) {
-  // выключаем светодиод и сообщаем новое состояние
-  led_set(false);
-  LOG_INF("led %s\n", led_is_on() ? "on" : "off");
-}
 
 void cmd_info(void) {
   // печатаем паспорт устройства
@@ -63,7 +46,6 @@ void cmd_fw_info(void) {
   fw_info();
 }
 
-
 void cmd_dev_info(void) {
   dev_info();
 }
@@ -76,6 +58,10 @@ void cmd_clk_info(void) {
   clk_info();
 }
 
+void cmd_uptime(void) {
+  uptime();
+}
+
 struct command_t
 {
     const char *name;
@@ -83,8 +69,7 @@ struct command_t
 };
 
 const struct command_t commands[] = {
-    { "enable", cmd_enable },
-    { "disable", cmd_disable },
+
     { "info", cmd_info },
     { "version", cmd_version },
     { "ping", cmd_ping },
@@ -93,6 +78,7 @@ const struct command_t commands[] = {
     { "dev_info", cmd_dev_info },
     { "boot_info", cmd_boot_info },
     { "clk_info", cmd_clk_info },
+    { "uptime", cmd_uptime }
 };
 
 const uint command_count = sizeof(commands) / sizeof(commands[0]);
@@ -142,6 +128,21 @@ void read_line(void) {
   }
 }
 
+const uint BLINK_HALF_PERIOD_MS = 500;
+
+uint64_t last_toggle_us = 0;
+
+void blink(void)
+{
+    uint64_t now_us = time_us_64();
+
+    if (now_us - last_toggle_us >= BLINK_HALF_PERIOD_MS * 1000)
+    {
+        last_toggle_us = now_us;
+        led_toggle();
+    }
+}
+
 int main() {
   // инициализируем пин светодиода
   // настраиваем пин светодиода на выход
@@ -156,15 +157,7 @@ int main() {
   bool previous = false;
 
   while (1) {
-    bool current = get_button_debounce(BUTTON_PIN);
-    ;
-
-    if (previous == true && current == false) {
-      led_toggle();
-      LOG_INF("led %s\n", led_is_on() ? "on" : "off");
-    }
-
-    previous = current;
+    blink();
     read_line();
   }
 }
