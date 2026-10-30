@@ -9,11 +9,6 @@
 #include "command.h"
 #include "pico/stdlib.h"
 
-// добавляем заголовочный файл функций ввода-вывода
-// добавляем заголовочный файл функций работы с GPIO
-
-const uint BUTTON_PIN = 15;
-const uint DEBOUNCE_MS = 20;
 
 #define LINE_SIZE 32
 
@@ -148,13 +143,6 @@ int main() {
   // настраиваем пин светодиода на выход
   stdio_init_all();
   led_init();
-
-  gpio_init(BUTTON_PIN);
-  gpio_set_dir(BUTTON_PIN, GPIO_IN);
-  gpio_pull_up(BUTTON_PIN);
-
-  bool led = false;
-  bool previous = false;
 
   while (1) {
     blink();
