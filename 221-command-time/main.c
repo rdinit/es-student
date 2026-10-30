@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "clock.h"
+#include "command.h"
 #include "device.h"
 #include "led.h"
 #include "log.h"
 #include "memory.h"
-#include "clock.h"
-#include "command.h"
 #include "pico/stdlib.h"
-
 
 #define LINE_SIZE 32
 
@@ -16,6 +15,33 @@ char line[LINE_SIZE];
 uint line_length = 0;
 
 
+
+const uint CALC_PI_TERMS = 1000000;
+
+double calc_pi(uint terms) {
+  double sum = 0.0;
+  double sign = 1.0;
+
+  for (int k = 0; k < terms; k++) {
+    // Прибавить очередной член ряда: ±1 / (2k + 1)
+    sum += sign / (2.0 * k + 1.0);
+    sign = -sign;
+  }
+
+  // Сумма ряда равна π/4
+  return 4.0 * sum;
+}
+
+volatile double pi_result;
+
+void cmd_calc_pi(void) {
+  uint64_t start_us = time_us_64();
+  pi_result = calc_pi(CALC_PI_TERMS);
+  uint64_t spent_us = time_us_64() - start_us;
+
+  printf("pi: %.8f\n", pi_result);
+  printf("time: %llu ms\n", spent_us / 1000);
+}
 
 
 void cmd_info(void) {
@@ -28,72 +54,47 @@ void cmd_version(void) {
   log_version();
 }
 
-void cmd_ping(void)
-{
-    printf("pong\n");
-}
+void cmd_ping(void) { printf("pong\n"); }
 
-void cmd_mem_info(void) {
-  mem_info();
-}
+void cmd_mem_info(void) { mem_info(); }
 
-void cmd_fw_info(void) {
-  fw_info();
-}
+void cmd_fw_info(void) { fw_info(); }
 
-void cmd_dev_info(void) {
-  dev_info();
-}
+void cmd_dev_info(void) { dev_info(); }
 
-void cmd_boot_info(void) {
-  boot_info();
-}
+void cmd_boot_info(void) { boot_info(); }
 
-void cmd_clk_info(void) {
-  clk_info();
-}
+void cmd_clk_info(void) { clk_info(); }
 
-void cmd_uptime(void) {
-  uptime();
-}
+void cmd_uptime(void) { uptime(); }
 
-struct command_t
-{
-    const char *name;
-    command_handler_t handler;
+struct command_t {
+  const char* name;
+  command_handler_t handler;
 };
 
 const struct command_t commands[] = {
 
-    { "info", cmd_info },
-    { "version", cmd_version },
-    { "ping", cmd_ping },
-    { "mem_info", cmd_mem_info },
-    { "fw_info", cmd_fw_info },
-    { "dev_info", cmd_dev_info },
-    { "boot_info", cmd_boot_info },
-    { "clk_info", cmd_clk_info },
-    { "uptime", cmd_uptime }
-};
+    {"info", cmd_info},           {"version", cmd_version},
+    {"ping", cmd_ping},           {"mem_info", cmd_mem_info},
+    {"fw_info", cmd_fw_info},     {"dev_info", cmd_dev_info},
+    {"boot_info", cmd_boot_info}, {"clk_info", cmd_clk_info},
+    {"uptime", cmd_uptime},       {"calc_pi", cmd_calc_pi}};
 
 const uint command_count = sizeof(commands) / sizeof(commands[0]);
 
-void handle_command(const char *command)
-{
-    for (uint i = 0; i < command_count; i++)
-    {
-        if (strcmp(command, commands[i].name) == 0)
-        {
-            if (commands[i].handler != NULL)
-            {
-                commands[i].handler();
-            }
+void handle_command(const char* command) {
+  for (uint i = 0; i < command_count; i++) {
+    if (strcmp(command, commands[i].name) == 0) {
+      if (commands[i].handler != NULL) {
+        commands[i].handler();
+      }
 
-            return;
-        }
+      return;
     }
+  }
 
-    LOG_ERR("unknown command: %s\n", command);
+  LOG_ERR("unknown command: %s\n", command);
 }
 
 void read_line(void) {
@@ -127,16 +128,15 @@ const uint BLINK_HALF_PERIOD_MS = 500;
 
 uint64_t last_toggle_us = 0;
 
-void blink(void)
-{
-    uint64_t now_us = time_us_64();
+void blink(void) {
+  uint64_t now_us = time_us_64();
 
-    if (now_us - last_toggle_us >= BLINK_HALF_PERIOD_MS * 1000)
-    {
-        last_toggle_us = now_us;
-        led_toggle();
-    }
+  if (now_us - last_toggle_us >= BLINK_HALF_PERIOD_MS * 1000) {
+    last_toggle_us = now_us;
+    led_toggle();
+  }
 }
+
 
 int main() {
   // инициализируем пин светодиода
