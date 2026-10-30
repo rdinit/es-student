@@ -3,24 +3,24 @@
 устройство: 2e8a:000a
 серийный номер: E66358986372252C
 порт: COM7
-начало: 2026-10-31T00:55:14
+начало: 2026-10-31T01:04:21
    0.000 --> clk_info
-   0.172 <-- clk_info
-   0.172 <-- dbg read_line:130 got clk_info
-   0.172 <-- signal     set_khz measured_khz
-   0.172 <-- clk_ref      12000        12001
-   0.172 <-- clk_sys     125000       125001
-   0.172 <-- clk_peri    125000       125000
-   0.172 <-- clk_usb      48000        48000
-   0.172 <-- clk_adc      48000        48000
-   0.172 <-- rosc             -         5657
-   2.032 --> info
-   2.125 <-- info
-   2.125 <-- dbg read_line:130 got info
-   2.125 <-- project: 221_command_time
-   2.125 <-- repo: https://github.com/rdinit/es-student
-   2.125 <-- board: pico
-   2.125 <-- serial: E66358986372252C
-   2.125 <-- chip: manufacturer 0x927, part 0x0002, revision 2
-   2.125 <-- pico-sdk: 2.3.0
+   0.187 <-- clk_info
+   0.187 <-- dbg read_line:130 got clk_info
+   0.187 <-- signal     set_khz measured_khz
+   0.187 <-- clk_ref      12000        12001
+   0.187 <-- clk_sys     125000       125001
+   0.187 <-- clk_peri    125000       125000
+   0.187 <-- clk_usb      48000        48000
+   0.187 <-- clk_adc      48000        48000
+   0.187 <-- rosc             -         5654
+   2.016 --> info
+   2.109 <-- info
+   2.109 <-- dbg read_line:130 got info
+   2.109 <-- project: 221-command-time
+   2.109 <-- repo: https://github.com/rdinit/es-student
+   2.109 <-- board: pico
+   2.109 <-- serial: E66358986372252C
+   2.109 <-- chip: manufacturer 0x927, part 0x0002, revision 2
+   2.109 <-- pico-sdk: 2.3.0
 итог: отправлено команд 2, принято строк 17
