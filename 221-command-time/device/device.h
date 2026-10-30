@@ -2,7 +2,7 @@
 #define DEVICE_NAME "es-led-module"
 #define FIRMWARE_VERSION "1.1.0"
 
-#define DEVICE_PROJECT "221_command_time"
+#define DEVICE_PROJECT "221-command-time"
 #define DEVICE_REPO "https://github.com/rdinit/es-student"
 
 #ifndef DEVICE_BOARD
