@@ -1,1 +1,1 @@
-void clk_info();
+void clk_info(void);
