@@ -7,17 +7,16 @@
 #include "led.h"
 #include "log.h"
 #include "memory.h"
-#include "profiling.h"
 #include "pico/stdlib.h"
+#include "profiling.h"
 
 #define LINE_SIZE 32
 
 char line[LINE_SIZE];
 uint line_length = 0;
 
-
-// прикидка: за член ряда 4 операции с double, 175 + 110 + 190 + 110 = 585 тактов;
-// 1 000 000 членов по 585 тактов при 125 МГц — около 4,7 с
+// прикидка: за член ряда 4 операции с double, 175 + 110 + 190 + 110 = 585
+// тактов; 1 000 000 членов по 585 тактов при 125 МГц — около 4,7 с
 const uint CALC_PI_TERMS = 1000000;
 
 double calc_pi(uint terms) {
@@ -44,7 +43,6 @@ void cmd_calc_pi(void) {
   printf("pi: %.8f\n", pi_result);
   printf("time: %llu ms\n", spent_us / 1000);
 }
-
 
 void cmd_info(void) {
   // печатаем паспорт устройства
@@ -74,6 +72,10 @@ void cmd_main_time_reset(void) { main_time_reset(); }
 
 void cmd_main_time_exec(void) { main_time_exec(); }
 
+void cmd_clk_sys_low(void) { clk_sys_low(); }
+
+void cmd_clk_sys_default() { clk_sys_default(); }
+
 struct command_t {
   const char* name;
   command_handler_t handler;
@@ -81,14 +83,22 @@ struct command_t {
 
 const struct command_t commands[] = {
 
-    {"info", cmd_info},           {"version", cmd_version},
-    {"ping", cmd_ping},           {"mem_info", cmd_mem_info},
-    {"fw_info", cmd_fw_info},     {"dev_info", cmd_dev_info},
-    {"boot_info", cmd_boot_info}, {"clk_info", cmd_clk_info},
-    {"uptime", cmd_uptime},       {"calc_pi", cmd_calc_pi},
+    {"info", cmd_info},
+    {"version", cmd_version},
+    {"ping", cmd_ping},
+    {"mem_info", cmd_mem_info},
+    {"fw_info", cmd_fw_info},
+    {"dev_info", cmd_dev_info},
+    {"boot_info", cmd_boot_info},
+    {"clk_info", cmd_clk_info},
+    {"uptime", cmd_uptime},
+    {"calc_pi", cmd_calc_pi},
 
     {"main_time_reset", cmd_main_time_reset},
-    {"main_time_exec", cmd_main_time_exec},};
+    {"main_time_exec", cmd_main_time_exec},
+    {"clk_sys_low", cmd_clk_sys_low},
+    {"clk_sys_default", cmd_clk_sys_default},
+};
 
 const uint command_count = sizeof(commands) / sizeof(commands[0]);
 
@@ -145,7 +155,6 @@ void blink(void) {
     led_toggle();
   }
 }
-
 
 int main() {
   // инициализируем пин светодиода

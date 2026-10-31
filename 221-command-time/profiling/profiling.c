@@ -31,9 +31,7 @@ void profiling_iteration(void) {
             ((uint64_t)iteration_us << FRACTION_SHIFT);
 }
 
-float profiling_avg_us(void)
-
-{
+float profiling_avg_us(void) {
   return (float)(avg_sum >> AVG_SHIFT) / (1 << FRACTION_SHIFT);
 }
 
