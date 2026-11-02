@@ -1,7 +1,11 @@
 
 #include "api.h"
 
+#include <ctype.h>
+#include <stdlib.h>
+
 #include "device.h"
+#include "errno.h"
 #include "hardware/clocks.h"
 #include "log.h"
 #include "pico/stdlib.h"
@@ -11,26 +15,23 @@
 
 // Число без знака из десятичной записи. false — в записи не только цифры
 // или число не помещается в uint32_t.
-static bool parse_u32(const char *text, uint32_t *value)
-{
-    // strtoul приняла бы и знак: из "-1" получилось бы 4294967295
-    if (!isdigit((unsigned char)text[0]))
-    {
-        return false;
-    }
+static bool parse_u32(const char* text, uint32_t* value) {
+  // strtoul приняла бы и знак: из "-1" получилось бы 4294967295
+  if (!isdigit((unsigned char)text[0])) {
+    return false;
+  }
 
-    char *end;
-    errno = 0;
-    unsigned long number = strtoul(text, &end, 10);
+  char* end;
+  errno = 0;
+  unsigned long number = strtoul(text, &end, 10);
 
-    // после числа остались символы или число не поместилось
-    if (*end != '\0' || errno == ERANGE || number > UINT32_MAX)
-    {
-        return false;
-    }
+  // после числа остались символы или число не поместилось
+  if (*end != '\0' || errno == ERANGE || number > UINT32_MAX) {
+    return false;
+  }
 
-    *value = (uint32_t)number;
-    return true;
+  *value = (uint32_t)number;
+  return true;
 }
 
 // обработчик команды: получает имя и аргументы
