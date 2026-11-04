@@ -66,7 +66,16 @@ volatile double pi_result;
 
 void cmd_calc_pi(const command_t* command) {
   uint64_t start_us = time_us_64();
-  pi_result = calc_pi(CALC_PI_TERMS);
+  uint32_t terms;
+  if (command->argc != 1) {
+    LOG_ERR("error: calc_pi requires 1 argument, got %d\n", command->argc);
+    return;
+  }
+  if (!parse_u32(command->argv[1], &terms)) {
+    LOG_ERR("error: can't parse uint32_t from '%s'\n", command->argv[1]);
+    return;
+  }
+  pi_result = calc_pi(terms);
   uint64_t spent_us = time_us_64() - start_us;
 
   printf("pi: %.8f\n", pi_result);
