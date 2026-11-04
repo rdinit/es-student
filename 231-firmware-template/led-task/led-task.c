@@ -40,7 +40,21 @@ void led_task_set_state(led_state_t state) {
   // «выключен» — гасим, «горит» — зажигаем, «мигает» — первое переключение
   // сразу
   led_state = state;
-  led_task_handle();
+  switch (led_state) {
+    // «выключен» и «горит» — ничего не делаем, светодиод установлен при входе
+    // «мигает» — каждые полпериода переключаем светодиод
+    case LED_STATE_OFF:
+      gpio_put(LED_PIN, false);
+      break;
+    case LED_STATE_ON:
+      gpio_put(LED_PIN, true);
+      break;
+    case LED_STATE_BLINK:
+      if (period_elapsed(&last_toggle_us, led_period_ms * 1000)) {
+        gpio_put(LED_PIN, !gpio_get(LED_PIN));
+      }
+  }
+//   led_task_handle();
 }
 
 void led_task_handle(void) {
