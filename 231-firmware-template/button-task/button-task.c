@@ -1,9 +1,15 @@
 #include "button-task.h"
 
-
+#include "hardware/gpio.h"
 #include "pico/stdlib.h"
 
-#include "hardware/gpio.h"
+typedef enum {
+  RELEASED,
+  PREPRESSED,
+  PRESSED,
+  PRERELEASED,
+
+} button_state_t;
 
 static button_state_t button_state = RELEASED;
 static uint64_t last_toggle_us = 0;
@@ -48,7 +54,7 @@ void button_task_handle(void) {
         button_state = PRERELEASED;
         last_toggle_us = now_us;
       }
-        break;
+      break;
     case PRERELEASED:
       if (now_us - last_toggle_us >= DEBOUNCE_US) {
         if (button_input == 1) {
@@ -60,11 +66,6 @@ void button_task_handle(void) {
   }
 }
 
-bool button_task_is_pressed() {
-  return button_state == PRESSED;
-}
+bool button_task_is_pressed() { return button_state == PRESSED; }
 
-
-uint32_t button_task_get_press_count() {
-    return button_press_count;
-}
+uint32_t button_task_get_press_count() { return button_press_count; }

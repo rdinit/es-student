@@ -2,13 +2,7 @@
 
 #include "pico/stdlib.h"
 
-typedef enum {
-    RELEASED,
-    PREPRESSED,
-    PRESSED,
-    PRERELEASED,
-    
-} button_state_t;
+
 
 void button_task_init(void);
 
