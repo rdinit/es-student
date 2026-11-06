@@ -37,7 +37,7 @@ const command_t *stdio_text_protocol_handle(void)
         cmd.truncated = false;
         for (int i = 0; i < line_buffer_length - 1; ++i) {
             if (line_buffer[i] == '\0') {
-                LOG_DBG("argc: %d\n new will be %s", cmd.argc, &line_buffer[i+1]);
+                LOG_DBG("argc: %d\n new will be %s", (unsigned) cmd.argc, &line_buffer[i+1]);
                 if (cmd.argc == STDIO_TEXT_PROTOCOL_MAX_ARGS) {
                     LOG_DBG("truncated");
                     cmd.truncated = true;
@@ -48,7 +48,7 @@ const command_t *stdio_text_protocol_handle(void)
             }
         }
         putchar('\n');
-        LOG_DBG("got command: %s, argc: %d\n", cmd.name, cmd.argc);
+        LOG_DBG("got command: %s, argc: %d\n", cmd.name, (unsigned) cmd.argc);
         for (int i = 0; i < cmd.argc; ++i) {
             LOG_DBG("arg[%d]: %s\n", i, cmd.argv[i]);
         }

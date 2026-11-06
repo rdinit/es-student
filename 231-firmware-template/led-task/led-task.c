@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 led_state_t led_state = LED_STATE_OFF;
-uint64_t last_toggle_us = 0;
+static uint64_t last_toggle_us = 0;
 uint32_t led_period_ms = 1000;
 int LED_PIN = 25;
 
@@ -91,5 +91,5 @@ uint32_t led_task_get_period_ms(void) {
 }
 
 void print_led_state(void) {
-    printf("led: %s, period %u ms\n", led_state == LED_STATE_OFF ? "off" : led_state == LED_STATE_ON ? "on" : "blink", led_period_ms);
+    printf("led: %s, period %u ms\n", led_state == LED_STATE_OFF ? "off" : led_state == LED_STATE_ON ? "on" : "blink", (unsigned) led_period_ms);
 }

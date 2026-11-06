@@ -13,6 +13,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "led-task.h"
+#include "button-task.h"
 
 // Число без знака из десятичной записи. false — в записи не только цифры
 // или число не помещается в uint32_t.
@@ -69,11 +70,11 @@ void cmd_calc_pi(const command_t* command) {
   uint64_t start_us = time_us_64();
   uint32_t terms;
   if (command->argc != 1) {
-    LOG_ERR("error: calc_pi requires 1 argument, got %d\n", command->argc);
+    LOG_ERR("error: calc_pi requires 1 argument, got %d\n",(unsigned) command->argc);
     return;
   }
   if (!parse_u32(command->argv[1], &terms)) {
-    LOG_ERR("error: can't parse uint32_t from '%s'\n", command->argv[1]);
+    LOG_ERR("error: can't parse uint32_t from '%s'\n",(unsigned) command->argv[1]);
     return;
   }
   pi_result = calc_pi(terms);
@@ -132,6 +133,11 @@ void cmd_led_blink(const command_t *command)
     print_led_state();
 }
 
+void cmd_button(const command_t *command)
+{
+    printf("button: %s, presses %u\n", button_task_is_pressed() ? "pressed" : "released", button_task_get_press_count());
+}
+
 const api_command_t commands[] = {
     {"help", "list of commands", cmd_help},
     {"info", "device passport", cmd_info},
@@ -144,6 +150,7 @@ const api_command_t commands[] = {
      {"led_disable", "disable led", cmd_led_disable},
      {"led_blink", "toggle led blinking", cmd_led_blink},
      {"led_period", "set led period in ms: led_period <period_ms>", cmd_led_period},
+     {"button", "show button state and press count", cmd_button},
 };
 
 const uint command_count = sizeof(commands) / sizeof(commands[0]);
