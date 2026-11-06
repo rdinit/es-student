@@ -35,6 +35,20 @@ void led_task_init(void) {
   led_task_set_state(LED_STATE_BLINK);
 }
 
+void led_task_next_state() {
+    switch (led_state) {
+        case LED_STATE_OFF:
+            led_task_set_state(LED_STATE_ON);
+            break;
+        case LED_STATE_ON:
+            led_task_set_state(LED_STATE_BLINK);
+            break;
+        case LED_STATE_BLINK:
+            led_task_set_state(LED_STATE_OFF);
+            break;
+    }
+}
+
 void led_task_set_state(led_state_t state) {
   // запоминаем состояние и выполняем действие при входе:
   // «выключен» — гасим, «горит» — зажигаем, «мигает» — первое переключение
@@ -93,3 +107,4 @@ uint32_t led_task_get_period_ms(void) {
 void print_led_state(void) {
     printf("led: %s, period %u ms\n", led_state == LED_STATE_OFF ? "off" : led_state == LED_STATE_ON ? "on" : "blink", (unsigned) led_period_ms);
 }
+
