@@ -8,6 +8,7 @@
 #include "stdio-text-protocol.h"
 #include "led-task.h"
 #include "button-task.h"
+#include "pi-task.h"
 
 int main() {
   // инициализируем пин светодиода
@@ -23,6 +24,7 @@ int main() {
     profiling_iteration();
     led_task_handle();
     button_task_handle();
+    pi_task_handle();
     const command_t *command = stdio_text_protocol_handle();
     if (command != NULL) {
       api_handle(command);

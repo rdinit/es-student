@@ -14,6 +14,7 @@
 #include "string.h"
 #include "led-task.h"
 #include "button-task.h"
+#include "pi-task.h"
 
 // Число без знака из десятичной записи. false — в записи не только цифры
 // или число не помещается в uint32_t.
@@ -46,43 +47,28 @@ typedef struct {
   api_callback_t callback;
 } api_command_t;
 
-// прикидка: за член ряда 4 операции с double, 175 + 110 + 190 + 110 = 585
-// тактов; 1 000 000 членов по 585 тактов при 125 МГц — около 4,7 с
-const uint CALC_PI_TERMS = 1000000;
 
-double calc_pi(uint terms) {
-  double sum = 0.0;
-  double sign = 1.0;
 
-  for (int k = 0; k < terms; k++) {
-    // Прибавить очередной член ряда: ±1 / (2k + 1)
-    sum += sign / (2.0 * k + 1.0);
-    sign = -sign;
-  }
+void cmd_pi_start(const command_t* command) {
+  uint32_t terms = PI_TERMS_DEFAULT;
 
-  // Сумма ряда равна π/4
-  return 4.0 * sum;
-}
-
-volatile double pi_result;
-
-void cmd_calc_pi(const command_t* command) {
-  uint64_t start_us = time_us_64();
-  uint32_t terms;
-  if (command->argc != 1) {
-    LOG_ERR("error: calc_pi requires 1 argument, got %d\n",(unsigned) command->argc);
+  if (command->argc > 1) {
+    printf("error: usage pi_start [<terms>]\n");
     return;
   }
-  if (!parse_u32(command->argv[1], &terms)) {
-    LOG_ERR("error: can't parse uint32_t from '%s'\n",(unsigned) command->argv[1]);
+  if (command->argc == 1 && !parse_u32(command->argv[0], &terms)) {
+    printf("error: can't parse uint32_t from '%s'\n", command->argv[0]);
     return;
   }
-  pi_result = calc_pi(terms);
-  uint64_t spent_us = time_us_64() - start_us;
+  if (!pi_task_start(terms)) {
+    printf("error: pi is busy\n");
+    return;
+  }
 
-  printf("pi: %.8f\n", pi_result);
-  printf("time: %llu ms\n", spent_us / 1000);
+  printf("pi: started, %u terms\n", (unsigned) terms);
 }
+
+void cmd_pi(const command_t* command) { print_pi_state(); }
 
 void cmd_info(const command_t* command) { device_info(); }
 
@@ -142,7 +128,8 @@ const api_command_t commands[] = {
     {"help", "list of commands", cmd_help},
     {"info", "device passport", cmd_info},
     {"uptime", "time since reset", cmd_uptime},
-    {"calc_pi", "calculate pi: calc_pi [terms]", cmd_calc_pi},
+    {"pi_start", "start pi calculation: pi_start [terms]", cmd_pi_start},
+    {"pi", "pi calculation result or state", cmd_pi},
     {"main_time_reset", "reset maximum iteration", cmd_main_time_reset},
     {"main_time_exec", "superloop iteration: average and maximum",
      cmd_main_time_exec},
