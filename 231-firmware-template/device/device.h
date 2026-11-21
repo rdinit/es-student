@@ -1,8 +1,9 @@
 #pragma once
+
 #define DEVICE_NAME "es-led-module"
 #define FIRMWARE_VERSION "1.1.0"
 
-#define DEVICE_PROJECT "221-command-time"
+#define DEVICE_PROJECT "231-firmware-template"
 #define DEVICE_REPO "https://github.com/rdinit/es-student"
 
 #ifndef DEVICE_BOARD
@@ -11,14 +12,16 @@
 
 #include <stdint.h>
 
-void device_info(void);
+// восемь байт номера платы по две шестнадцатеричные цифры и нулевой символ
+#define DEVICE_SERIAL_SIZE (8 * 2 + 1)
 
+typedef struct {
+  const char* device_board;
+  char board_id[DEVICE_SERIAL_SIZE];
+  uint32_t manufacturer;
+  uint32_t part;
+  uint32_t chip_revision;
+  const char* sdk_version;
+} device_info_t;
 
-struct info_t
-{
-    uint32_t version;
-    char name[13];
-    uint8_t revision;
-};
-
-extern struct info_t device_card;
+void device_get_info(device_info_t* info);
