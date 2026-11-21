@@ -3,6 +3,7 @@
 #include "hardware/gpio.h"
 #include "pico/stdlib.h"
 #include "led-task.h"
+#include "systime/systime.h"
 
 typedef enum {
   RELEASED,
@@ -30,7 +31,7 @@ void button_task_handle(void) {
   // читаем уровень: нажатая кнопка замыкает вывод на землю и даёт ноль
   // читаем часы
   uint32_t button_input = gpio_get(BUTTON_PIN);
-  uint64_t now_us = time_us_64();
+  uint64_t now_us = systime_us();
   switch (button_state) {
     // переходы по таблице; при переходе в «нажата»
     // увеличиваем счётчик и вызываем led_task_next_state()

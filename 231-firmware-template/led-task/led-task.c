@@ -8,24 +8,6 @@ static uint64_t last_toggle_us = 0;
 uint32_t led_period_ms = 1000;
 int LED_PIN = 25;
 
-bool period_elapsed(uint64_t *last_us, uint64_t period_us)
-{
-    uint64_t now_us = time_us_64();
-
-    if (now_us - *last_us < period_us) {
-        return false;
-    }
-
-    // Следующее срабатывание отсчитывается от прошлого, а не от «сейчас»
-    *last_us += period_us;
-
-    // Отстали больше чем на период: не догонять, а начать отсчёт заново
-    if (now_us - *last_us >= period_us) {
-        *last_us = now_us;
-    }
-
-    return true;
-}
 
 void led_task_init(void) {
   // настраиваем вывод светодиода, период 1000 мс, состояние «мигает»

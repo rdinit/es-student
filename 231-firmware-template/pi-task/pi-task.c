@@ -32,7 +32,7 @@ bool pi_task_start(uint32_t terms) {
   pi_sum = 0.0;
   pi_sign = 1.0;
   pi_result = 0.0;
-  pi_start_us = time_us_64();
+  pi_start_us = systime_us();
   pi_end_us = 0;
   pi_state = PI_STATE_CALC;
   return true;
@@ -59,7 +59,7 @@ void pi_task_handle(void) {
 
   if (pi_k == pi_terms) {
     pi_result = 4.0 * pi_sum;
-    pi_end_us = time_us_64();
+    pi_end_us = systime_us();
     pi_state = PI_STATE_DONE;
   }
 }

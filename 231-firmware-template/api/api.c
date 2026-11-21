@@ -5,16 +5,18 @@
 #include <stdlib.h>
 
 #include "button-task.h"
-#include "device.h"
+#include "device/device.h"
 #include "errno.h"
 #include "hardware/clocks.h"
 #include "led-task.h"
-#include "log.h"
+#include "logging/log.h"
 #include "pi-task.h"
 #include "pico/stdlib.h"
-#include "profiling.h"
+#include "profiling/profiling.h"
 #include "stdio.h"
 #include "string.h"
+#include "firmware.h"
+#include "systime/systime.h"
 
 // Число без знака из десятичной записи. false — в записи не только цифры
 // или число не помещается в uint32_t.
@@ -71,10 +73,10 @@ void cmd_pi(const command_t* command) { print_pi_state(); }
 void cmd_info(const command_t* command) {
   device_info_t info;
   device_get_info(&info);
-  printf("name: %s\n", DEVICE_NAME);
+  printf("name: %s\n", FIRMWARE_NAME);
   printf("version: %s\n", FIRMWARE_VERSION);
-  printf("project: %s\n", DEVICE_PROJECT);
-  printf("repo: %s\n", DEVICE_REPO);
+  printf("project: %s\n", FIRMWARE_PROJECT);
+  printf("repo: %s\n", FIRMWARE_REPO);
   printf("board: %s\n", info.device_board);
   printf("serial: %s\n", info.board_id);
   printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\n",
@@ -84,7 +86,7 @@ void cmd_info(const command_t* command) {
 }
 
 void cmd_uptime(const command_t* command) {
-  printf("uptime: %llu ms\n", time_us_64() / 1000);
+  printf("uptime: %llu ms\n", systime_ms);
 }
 
 void cmd_help(const command_t* command);
