@@ -9,4 +9,5 @@ target_include_directories(stdio_text_protocol PUBLIC
 target_link_libraries(stdio_text_protocol PRIVATE
     pico_stdlib
     pico_unique_id
+    logging
 )

@@ -1,4 +1,4 @@
-#include "sytime/systime.h"
+#include "systime/systime.h"
 
 #include "pico/stdlib.h"
 

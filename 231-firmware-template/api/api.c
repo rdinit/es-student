@@ -86,7 +86,7 @@ void cmd_info(const command_t* command) {
 }
 
 void cmd_uptime(const command_t* command) {
-  printf("uptime: %llu ms\n", systime_ms);
+  printf("uptime: %llu ms\n", systime_ms());
 }
 
 void cmd_help(const command_t* command);

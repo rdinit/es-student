@@ -1,6 +1,7 @@
 #pragma once
-#include "pico/stdlib.h"
 
+#include <stdint.h>
+#include <stdbool.h>
 
 uint64_t systime_us(void);
 uint64_t systime_ms(void);

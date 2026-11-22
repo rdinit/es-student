@@ -1,6 +1,7 @@
 #include "led-task.h"
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
+#include "systime/systime.h"
 #include <stdio.h>
 
 led_state_t led_state = LED_STATE_OFF;
@@ -46,7 +47,7 @@ void led_task_set_state(led_state_t state) {
       gpio_put(LED_PIN, true);
       break;
     case LED_STATE_BLINK:
-      if (period_elapsed(&last_toggle_us, led_period_ms * 1000)) {
+      if (systime_period_elapsed(&last_toggle_us, led_period_ms * 1000)) {
         gpio_put(LED_PIN, !gpio_get(LED_PIN));
       }
   }
@@ -64,7 +65,7 @@ void led_task_handle(void) {
       gpio_put(LED_PIN, true);
       break;
     case LED_STATE_BLINK:
-      if (period_elapsed(&last_toggle_us, led_period_ms * 1000)) {
+      if (systime_period_elapsed(&last_toggle_us, led_period_ms * 1000)) {
         gpio_put(LED_PIN, !gpio_get(LED_PIN));
       }
   }
