@@ -1,8 +1,7 @@
 #pragma once
 
-#include "pico/stdlib.h"
-
-
+#include <stdbool.h>
+#include <stdint.h>
 
 void button_task_init(void);
 

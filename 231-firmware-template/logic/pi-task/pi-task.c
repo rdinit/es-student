@@ -1,9 +1,10 @@
 #define PI_TERMS_PER_CALL 100
 #include "pi-task.h"
 
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
-#include "pico/stdlib.h"
 #include "systime/systime.h"
 
 typedef enum {

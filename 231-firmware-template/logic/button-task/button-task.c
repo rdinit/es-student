@@ -1,9 +1,12 @@
 #include "button-task.h"
 
-#include "hardware/gpio.h"
-#include "pico/stdlib.h"
-#include "led-task.h"
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "platform/platform.h"
 #include "systime/systime.h"
+
+#include "led-task/led-task.h"
 
 typedef enum {
   RELEASED,
@@ -16,34 +19,30 @@ typedef enum {
 static button_state_t button_state = RELEASED;
 static uint64_t last_toggle_us = 0;
 uint32_t button_press_count = 0;
-uint8_t BUTTON_PIN = 15;
 
 const uint64_t DEBOUNCE_US = 20000;
 
 void button_task_init(void) {
   // настраиваем вывод кнопки, подтяжка к питанию
-  gpio_init(BUTTON_PIN);
-  gpio_set_dir(BUTTON_PIN, GPIO_IN);
-  gpio_pull_up(BUTTON_PIN);
 }
 
 void button_task_handle(void) {
   // читаем уровень: нажатая кнопка замыкает вывод на землю и даёт ноль
   // читаем часы
-  uint32_t button_input = gpio_get(BUTTON_PIN);
+  uint32_t button_input = platform_button_read();
   uint64_t now_us = systime_us();
   switch (button_state) {
     // переходы по таблице; при переходе в «нажата»
     // увеличиваем счётчик и вызываем led_task_next_state()
     case RELEASED:
-      if (button_input == 0) {
+      if (button_input == 1) {
         button_state = PREPRESSED;
         last_toggle_us = now_us;
       }
       break;
     case PREPRESSED:
       if (now_us - last_toggle_us >= DEBOUNCE_US) {
-        if (button_input == 0) {
+        if (button_input == 1) {
           button_press_count++;
           led_task_next_state();
           button_state = PRESSED;
@@ -53,14 +52,14 @@ void button_task_handle(void) {
       }
       break;
     case PRESSED:
-      if (button_input == 1) {
+      if (button_input == 0) {
         button_state = PRERELEASED;
         last_toggle_us = now_us;
       }
       break;
     case PRERELEASED:
       if (now_us - last_toggle_us >= DEBOUNCE_US) {
-        if (button_input == 1) {
+        if (button_input == 0) {
           button_state = RELEASED;
         } else {
           button_state = PRESSED;

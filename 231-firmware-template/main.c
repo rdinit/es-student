@@ -1,16 +1,17 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "api.h"
-#include "button-task.h"
 #include "device/device.h"
-#include "led-task.h"
+#include "firmware.h"
 #include "logging/log.h"
-#include "pi-task.h"
+#include "logic/api/api.h"
+#include "logic/button-task/button-task.h"
+#include "logic/led-task/led-task.h"
+#include "logic/pi-task/pi-task.h"
 #include "pico/stdlib.h"
+#include "platform/platform.h"
 #include "profiling/profiling.h"
 #include "stdio-text-protocol/stdio-text-protocol.h"
-#include "firmware.h"
 
 typedef enum {
   STOPWATCH_LOOP,
@@ -23,8 +24,8 @@ typedef enum {
 int main() {
   // инициализируем пин светодиода
   // настраиваем пин светодиода на выход
+  platform_init();
   led_task_init();
-  button_task_init();
   stdio_text_protocol_init();
   LOG_INF("%s %s\n", FIRMWARE_NAME, FIRMWARE_VERSION);
 

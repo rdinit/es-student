@@ -1,22 +1,20 @@
-
-#include "api.h"
-
 #include <ctype.h>
+#include <errno.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include "button-task.h"
+#include "api-commands.h"
+#include "button-task/button-task.h"
 #include "device/device.h"
 #include "errno.h"
-#include "hardware/clocks.h"
-#include "led-task.h"
-#include "logging/log.h"
-#include "pi-task.h"
-#include "pico/stdlib.h"
-#include "profiling/profiling.h"
-#include "stdio.h"
-#include "string.h"
 #include "firmware.h"
+#include "led-task/led-task.h"
+#include "logging/log.h"
+#include "pi-task/pi-task.h"
+#include "profiling/profiling.h"
 #include "systime/systime.h"
+#include "stdio-text-protocol/stdio-text-protocol.h"
 
 // Число без знака из десятичной записи. false — в записи не только цифры
 // или число не помещается в uint32_t.
@@ -39,17 +37,7 @@ static bool parse_u32(const char* text, uint32_t* value) {
   return true;
 }
 
-// обработчик команды: получает имя и аргументы
-typedef void (*api_callback_t)(const command_t* command);
-
-// команда прибора: имя, справка для help и обработчик
-typedef struct {
-  const char* name;
-  const char* help;
-  api_callback_t callback;
-} api_command_t;
-
-void cmd_pi_start(const command_t* command) {
+static void cmd_pi_start(const command_t* command) {
   uint32_t terms = PI_TERMS_DEFAULT;
 
   if (command->argc > 1) {
@@ -68,9 +56,9 @@ void cmd_pi_start(const command_t* command) {
   printf("pi: started, %u terms\n", (unsigned)terms);
 }
 
-void cmd_pi(const command_t* command) { print_pi_state(); }
+static void cmd_pi(const command_t* command) { print_pi_state(); }
 
-void cmd_info(const command_t* command) {
+static void cmd_info(const command_t* command) {
   device_info_t info;
   device_get_info(&info);
   printf("name: %s\n", FIRMWARE_NAME);
@@ -85,13 +73,13 @@ void cmd_info(const command_t* command) {
   printf("pico-sdk: %s\n", info.sdk_version);
 }
 
-void cmd_uptime(const command_t* command) {
+static void cmd_uptime(const command_t* command) {
   printf("uptime: %llu ms\n", systime_ms());
 }
 
-void cmd_help(const command_t* command);
+static void cmd_help(const command_t* command);
 
-void cmd_led_period(const command_t* command) {
+static void cmd_led_period(const command_t* command) {
   uint32_t period_ms;
 
   if (command->argc != 1 || !parse_u32(command->argv[0], &period_ms)) {
@@ -109,46 +97,45 @@ void cmd_led_period(const command_t* command) {
   print_led_state();
 }
 
-void cmd_led_enable(const command_t* command) {
+static void cmd_led_enable(const command_t* command) {
   led_task_set_state(LED_STATE_ON);
   print_led_state();
 }
-void cmd_led_disable(const command_t* command) {
+static void cmd_led_disable(const command_t* command) {
   led_task_set_state(LED_STATE_OFF);
   print_led_state();
 }
-void cmd_led_blink(const command_t* command) {
+static void cmd_led_blink(const command_t* command) {
   led_task_set_state(LED_STATE_BLINK);
   print_led_state();
 }
 
-void cmd_button(const command_t* command) {
+static void cmd_button(const command_t* command) {
   printf("button: %s, presses %u\n",
          button_task_is_pressed() ? "pressed" : "released",
          button_task_get_press_count());
 }
 
-void cmd_profiling(const command_t* command) {
+static void cmd_profiling(const command_t* command) {
   if (PROFILING_STOPWATCHES_COUNT == 0) {
     printf("profiling is disabled in this build\n");
     return;
   }
 
   profiling_result_t r;
-  
+
   for (uint32_t id = 0; id < PROFILING_STOPWATCHES_COUNT; id++) {
     if (profiling_get(id, &r)) {
       //      loop       count 812345     mean 5.12 us  max 498 us
       printf("%-10s count %-8u mean %.2f us  max %u us\n", r.name, r.count,
              r.mean_us, r.max_us);
     }
-
   }
 }
 
-void cmd_profiling_reset(const command_t* command) { profiling_reset(); }
+static void cmd_profiling_reset(const command_t* command) { profiling_reset(); }
 
-const api_command_t commands[] = {
+const api_command_t api_commands[] = {
     {"help", "list of commands", cmd_help},
     {"info", "device passport", cmd_info},
     {"uptime", "time since reset", cmd_uptime},
@@ -164,31 +151,12 @@ const api_command_t commands[] = {
     {"profiling_reset", "reset stopwatch results", cmd_profiling_reset},
 };
 
-const uint command_count = sizeof(commands) / sizeof(commands[0]);
+const uint32_t api_command_count =
+    sizeof(api_commands) / sizeof(api_commands[0]);
 
-void cmd_help(const command_t* command) {
+static void cmd_help(const command_t* command) {
   printf("list of commands:\n");
-  for (uint i = 0; i < command_count; i++) {
-    printf("  %s: %s\n", commands[i].name, commands[i].help);
+  for (uint32_t i = 0; i < api_command_count; i++) {
+    printf("  %s: %s\n", api_commands[i].name, api_commands[i].help);
   }
-}
-
-void api_handle(const command_t* command) {
-  if (command->truncated) {
-    LOG_ERR("error: command longer than 63 characters or 4 arguments\n");
-    // printf("",
-    // command->name);
-    return;
-  }
-  for (uint i = 0; i < command_count; i++) {
-    if (strcmp(command->name, commands[i].name) == 0) {
-      if (commands[i].callback != NULL) {
-        commands[i].callback(command);
-      }
-
-      return;
-    }
-  }
-
-  printf("error: unknown command '%s', try help\n", command->name);
 }
