@@ -6,7 +6,6 @@
 #include "platform/platform.h"
 #include "systime/systime.h"
 
-#include "led-task/led-task.h"
 
 typedef enum {
   RELEASED,
@@ -46,7 +45,7 @@ void button_task_handle(void) {
       if (now_us - last_toggle_us >= DEBOUNCE_US) {
         if (button_input == 1) {
           button_press_count++;
-          led_task_next_state();
+          next_state();
           button_state = PRESSED;
         } else {
           button_state = RELEASED;
