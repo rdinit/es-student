@@ -20,10 +20,12 @@ static button_state_t button_state = RELEASED;
 static uint64_t last_toggle_us = 0;
 uint32_t button_press_count = 0;
 
+static void (*next_state)(void) = 0;
+
 const uint64_t DEBOUNCE_US = 20000;
 
-void button_task_init(void) {
-  // настраиваем вывод кнопки, подтяжка к питанию
+void button_task_init(void (*next_state_)(void)) {
+  next_state = next_state_;
 }
 
 void button_task_handle(void) {

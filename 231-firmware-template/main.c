@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-
 #include "device/device.h"
 #include "firmware.h"
 #include "logging/log.h"
@@ -8,7 +5,6 @@
 #include "logic/button-task/button-task.h"
 #include "logic/led-task/led-task.h"
 #include "logic/pi-task/pi-task.h"
-#include "pico/stdlib.h"
 #include "platform/platform.h"
 #include "profiling/profiling.h"
 #include "stdio-text-protocol/stdio-text-protocol.h"
@@ -26,6 +22,7 @@ int main() {
   // настраиваем пин светодиода на выход
   platform_init();
   led_task_init();
+  button_task_init(led_task_next_state);
   stdio_text_protocol_init();
   LOG_INF("%s %s\n", FIRMWARE_NAME, FIRMWARE_VERSION);
 
