@@ -155,8 +155,7 @@ const uint32_t api_command_count =
     sizeof(api_commands) / sizeof(api_commands[0]);
 
 static void cmd_help(const command_t* command) {
-  printf("list of commands:\n");
   for (uint32_t i = 0; i < api_command_count; i++) {
-    printf("  %s: %s\n", api_commands[i].name, api_commands[i].help);
+    printf("%-16s %s\n", api_commands[i].name, api_commands[i].help);
   }
 }
