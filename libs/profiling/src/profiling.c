@@ -22,7 +22,7 @@ void profiling_stopwatch_init(uint32_t id, const char* name) {
     stopwatches[id].start_us = 0;
   }
 }
-
+#if PROFILING_ENABLED
 void profiling_start(uint32_t id) {
   if (id < PROFILING_STOPWATCHES_COUNT) {
     stopwatches[id].start_us = time_us_32();
@@ -39,6 +39,8 @@ void profiling_stop(uint32_t id) {
     }
   }
 }
+
+#endif
 // false — секундомер с таким номером не заведён
 bool profiling_get(uint32_t id, profiling_result_t* result) {
   if (id < PROFILING_STOPWATCHES_COUNT && result != NULL &&
