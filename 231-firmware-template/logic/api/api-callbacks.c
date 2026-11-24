@@ -37,6 +37,15 @@ static bool parse_u32(const char* text, uint32_t* value) {
   return true;
 }
 
+static void print_led_state(void) {
+  led_state_t state = led_task_get_state();
+  printf("led: %s, period %u ms\n",
+         state == LED_STATE_OFF  ? "off"
+         : state == LED_STATE_ON ? "on"
+                                 : "blink",
+         (unsigned)led_task_get_period_ms());
+}
+
 static void cmd_pi_start(const command_t* command) {
   uint32_t terms = PI_TERMS_DEFAULT;
 
@@ -59,7 +68,14 @@ static void cmd_pi_start(const command_t* command) {
   printf("pi: started, %u terms\n", (unsigned)terms);
 }
 
-static void cmd_pi(const command_t* command) { print_pi_state(); }
+static void cmd_pi(const command_t* command) {
+  led_state_t state = led_task_get_state();
+  printf("led: %s, period %u ms\n",
+         state == LED_STATE_OFF  ? "off"
+         : state == LED_STATE_ON ? "on"
+                                 : "blink",
+         (unsigned)led_task_get_period_ms());
+}
 
 static void cmd_info(const command_t* command) {
   device_info_t info;

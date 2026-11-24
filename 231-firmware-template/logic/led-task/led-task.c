@@ -2,7 +2,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 
 #include "platform/platform.h"
 #include "systime/systime.h"
@@ -90,11 +89,3 @@ bool led_task_set_period_ms(uint32_t period_ms) {
   return true;
 }
 uint32_t led_task_get_period_ms(void) { return led_period_ms; }
-
-void print_led_state(void) {
-  printf("led: %s, period %u ms\n",
-         led_state == LED_STATE_OFF  ? "off"
-         : led_state == LED_STATE_ON ? "on"
-                                     : "blink",
-         (unsigned)led_period_ms);
-}

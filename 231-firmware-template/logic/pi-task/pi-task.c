@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 
 #include "systime/systime.h"
 
@@ -76,19 +75,4 @@ bool pi_task_get_result(double* result, uint64_t* time_ms) {
   *result = pi_result;
   *time_ms = (pi_end_us - pi_start_us) / 1000;
   return true;
-}
-
-void print_pi_state(void) {
-  switch (pi_state) {
-    case PI_STATE_INIT:
-      printf("pi: not started\n");
-      break;
-    case PI_STATE_CALC:
-      printf("pi: running\n");
-      break;
-    case PI_STATE_DONE:
-      printf("pi: %.9f in %llu ms\n", pi_result,
-             (unsigned long long)(pi_end_us - pi_start_us) / 1000);
-      break;
-  }
 }
