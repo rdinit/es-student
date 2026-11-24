@@ -113,7 +113,7 @@ static void cmd_led_blink(const command_t* command) {
 static void cmd_button(const command_t* command) {
   printf("button: %s, presses %u\n",
          button_task_is_pressed() ? "pressed" : "released",
-         button_task_get_press_count());
+         (unsigned)button_task_get_press_count());
 }
 
 static void cmd_profiling(const command_t* command) {
@@ -127,8 +127,8 @@ static void cmd_profiling(const command_t* command) {
   for (uint32_t id = 0; id < PROFILING_STOPWATCHES_COUNT; id++) {
     if (profiling_get(id, &r)) {
       //      loop       count 812345     mean 5.12 us  max 498 us
-      printf("%-10s count %-8u mean %.2f us  max %u us\n", r.name, r.count,
-             r.mean_us, r.max_us);
+      printf("%-10s count %-8u mean %.2f us  max %u us\n", (unsigned)r.name, (unsigned)r.count,
+             (unsigned)r.mean_us, (unsigned)r.max_us);
     }
   }
 }
