@@ -36,10 +36,9 @@ const command_t* stdio_text_protocol_handle(void) {
     cmd.truncated = false;
     for (int i = 0; i < line_buffer_length - 1; ++i) {
       if (line_buffer[i] == '\0') {
-        LOG_DBG("argc: %d\n new will be %s", (unsigned)cmd.argc,
-                &line_buffer[i + 1]);
+        // LOG_DBG("argc: %d\n new will be %s", (unsigned)cmd.argc, &line_buffer[i + 1]);
         if (cmd.argc == STDIO_TEXT_PROTOCOL_MAX_ARGS) {
-          LOG_DBG("truncated");
+        //   LOG_DBG("truncated");
           cmd.truncated = true;
           break;
         }
@@ -48,10 +47,10 @@ const command_t* stdio_text_protocol_handle(void) {
       }
     }
     putchar('\n');
-    LOG_DBG("got command: %s, argc: %d\n", cmd.name, (unsigned)cmd.argc);
-    for (int i = 0; i < cmd.argc; ++i) {
-      LOG_DBG("arg[%d]: %s\n", i, cmd.argv[i]);
-    }
+    // LOG_DBG("got command: %s, argc: %d\n", cmd.name, (unsigned)cmd.argc);
+    // for (int i = 0; i < cmd.argc; ++i) {
+    //   LOG_DBG("arg[%d]: %s\n", i, cmd.argv[i]);
+    // }
     line_buffer_length = 0;
     return &cmd;
   }
@@ -79,13 +78,18 @@ const command_t* stdio_text_protocol_handle(void) {
     return NULL;
   }
   if (symbol == ' ') {
-    symbol = 0;
-    putchar(' ');
+    if (line_buffer_length > 0 && line_buffer[line_buffer_length - 1] != 0) {
+      symbol = 0;
+      putchar(' ');
+      line_buffer[line_buffer_length] = symbol;
+      ++line_buffer_length;
+    }
   } else {
     putchar(symbol);
+    line_buffer[line_buffer_length] = symbol;
+    ++line_buffer_length;
   }
-  line_buffer[line_buffer_length] = symbol;
-  ++line_buffer_length;
+
   // конец строки: пустую строку пропускаем, иначе переводим строку в терминале,
   // делим строку на слова и возвращаем команду
 
