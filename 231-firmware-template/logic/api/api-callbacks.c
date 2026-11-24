@@ -13,8 +13,8 @@
 #include "logging/log.h"
 #include "pi-task/pi-task.h"
 #include "profiling/profiling.h"
-#include "systime/systime.h"
 #include "stdio-text-protocol/stdio-text-protocol.h"
+#include "systime/systime.h"
 
 // Число без знака из десятичной записи. false — в записи не только цифры
 // или число не помещается в uint32_t.
@@ -45,14 +45,17 @@ static void cmd_pi_start(const command_t* command) {
     return;
   }
   if (command->argc == 1 && !parse_u32(command->argv[0], &terms)) {
-    printf("error: can't parse uint32_t from '%s'\n", command->argv[0]);
+    printf("error: usage pi_start [<terms>]\n");
     return;
   }
   if (!pi_task_start(terms)) {
     printf("error: pi is busy\n");
     return;
   }
-
+  if (terms == 0) {
+    printf("error: terms must be greater than 0\n");
+    return;
+  }
   printf("pi: started, %u terms\n", (unsigned)terms);
 }
 
@@ -127,13 +130,16 @@ static void cmd_profiling(const command_t* command) {
   for (uint32_t id = 0; id < PROFILING_STOPWATCHES_COUNT; id++) {
     if (profiling_get(id, &r)) {
       //      loop       count 812345     mean 5.12 us  max 498 us
-      printf("%-10s count %-8u mean %.2f us  max %u us\n", r.name, (unsigned)r.count,
-             r.mean_us, (unsigned)r.max_us);
+      printf("%-10s count %-8u mean %.2f us  max %u us\n", r.name,
+             (unsigned)r.count, r.mean_us, (unsigned)r.max_us);
     }
   }
 }
 
-static void cmd_profiling_reset(const command_t* command) { profiling_reset(); }
+static void cmd_profiling_reset(const command_t* command) {
+  profiling_reset();
+  printf("profiling reset\n");
+}
 
 const api_command_t api_commands[] = {
     {"help", "list of commands", cmd_help},
