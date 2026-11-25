@@ -18,11 +18,6 @@ static button_state_t button_state[BUTTON_COUNT] = {0};
 static uint64_t last_toggle_us[BUTTON_COUNT] = {0};
 static uint32_t button_press_count[BUTTON_COUNT] = {0};
 
-// static button_state_t button_state = RELEASED;
-// static uint64_t last_toggle_us = 0;
-// uint32_t button_press_count = 0;
-
-static void (*next_state)(button_id) = 0;
 
 const uint64_t DEBOUNCE_US = 20000;
 
@@ -54,7 +49,7 @@ void button_task_handle(void) {
         if (now_us - last_toggle_us[i] >= DEBOUNCE_US) {
           if (button_input == 1) {
             button_press_count[i]++;
-            next_state(i);
+            callbacks[i]();
             button_state[i] = PRESSED;
           } else {
             button_state[i] = RELEASED;
