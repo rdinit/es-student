@@ -1,0 +1,18 @@
+$ git diff --no-index --stat 231-firmware-template 239-two-buttons
+warning: in the working copy of '231-firmware-template/logic/pi-task/pi-task.c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '239-two-buttons/logic/pi-task/pi-task.c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '231-firmware-template/logic/pi-task/pi-task.h', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '239-two-buttons/logic/pi-task/pi-task.h', LF will be replaced by CRLF the next time Git touches it
+ .../CMakeLists.txt                                 |   2 +-
+ 231-firmware-template/check-2-3-8.py => /dev/null  | 114 -----------------
+ .../device-2-3-8.log => /dev/null                  | 137 ---------------------
+ .../firmware.h                                     |   2 +-
+ .../logic/api/api-callbacks.c                      |  10 +-
+ .../logic/button-task/button-task.c                |  95 ++++++++------
+ .../logic/button-task/button-task.h                |   8 +-
+ .../logic/led-task/led-task.c                      |  13 ++
+ .../logic/led-task/led-task.h                      |   2 +
+ {231-firmware-template => 239-two-buttons}/main.c  |   8 +-
+ .../platform/platform.c                            |  22 ++--
+ .../platform/platform.h                            |   8 +-
+ 12 files changed, 110 insertions(+), 311 deletions(-)

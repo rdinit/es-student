@@ -17,12 +17,18 @@ typedef enum {
   STOPWATCH_PI,
 } stopwatch_t;
 
+
+static void (*const button_handlers[BUTTON_COUNT])(void) = {
+    [BUTTON_1] = led_task_next_state,
+    [BUTTON_2] = led_task_next_freq,
+};
+
 int main() {
   // инициализируем пин светодиода
   // настраиваем пин светодиода на выход
   platform_init();
   led_task_init();
-  button_task_init(led_task_next_state);
+  button_task_init(button_handlers);
   stdio_text_protocol_init();
   LOG_INF("%s %s\n", FIRMWARE_NAME, FIRMWARE_VERSION);
 

@@ -1,6 +1,7 @@
 #include "led-task.h"
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #include "platform/platform.h"
@@ -9,6 +10,12 @@
 led_state_t led_state = LED_STATE_OFF;
 static uint64_t last_toggle_us = 0;
 uint32_t led_period_ms = 1000;
+
+static const uint32_t LED_PERIODS_MS[] = {250, 500, 1000};
+const uint8_t LED_PERIOD_COUNT =
+    sizeof(LED_PERIODS_MS) / sizeof(LED_PERIODS_MS[0]);
+
+static size_t led_period_idx = 0;
 
 bool LED_ON = false;
 
@@ -56,6 +63,12 @@ void led_task_set_state(led_state_t state) {
         platform_led_set(LED_ON);
       }
   }
+}
+
+void led_task_next_freq() {
+  led_period_idx = (led_period_idx + 1) % LED_PERIOD_COUNT;
+  led_period_ms = LED_PERIODS_MS[led_period_idx];
+  last_toggle_us = systime_us();
 }
 
 void led_task_handle(void) {

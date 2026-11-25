@@ -15,6 +15,7 @@
 #include "profiling/profiling.h"
 #include "stdio-text-protocol/stdio-text-protocol.h"
 #include "systime/systime.h"
+#include "platform/platform.h"
 
 // Число без знака из десятичной записи. false — в записи не только цифры
 // или число не помещается в uint32_t.
@@ -130,9 +131,12 @@ static void cmd_led_blink(const command_t* command) {
 }
 
 static void cmd_button(const command_t* command) {
-  printf("button: %s, presses %u\n",
-         button_task_is_pressed() ? "pressed" : "released",
-         (unsigned)button_task_get_press_count());
+  for (int i = 0; i < BUTTON_COUNT; ++i) {
+    printf("button %d: %s, presses %u\n",
+           i + 1,
+           button_task_is_pressed((button_id)i) ? "pressed" : "released",
+           (unsigned)button_task_get_press_count((button_id)i));
+  }
 }
 
 static void cmd_profiling(const command_t* command) {
