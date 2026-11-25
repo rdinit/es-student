@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "api-commands.h"
+#include "api/api-commands.h"
 #include "button-task/button-task.h"
 #include "device/device.h"
 #include "errno.h"
