@@ -1,5 +1,5 @@
 
-#include "api/api.h"
+#include "api.h"
 
 #include <stdio.h>
 #include <string.h>
