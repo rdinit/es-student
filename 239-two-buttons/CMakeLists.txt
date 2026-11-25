@@ -1,0 +1,81 @@
+cmake_minimum_required(VERSION 3.15)
+
+set(PICO_BOARD pico)
+set(PICO_PLATFORM rp2040)
+
+include(pico_sdk_import.cmake)
+
+project(239_two_buttons)
+
+pico_sdk_init()
+
+add_compile_options(-Wall)
+
+add_subdirectory(../libs ${CMAKE_BINARY_DIR}/libs)
+
+add_executable(${PROJECT_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/main.c
+)
+
+add_library(platform STATIC
+    platform/platform.c
+)
+target_include_directories(platform PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+
+target_link_libraries(platform PRIVATE
+    pico_stdlib
+)
+
+add_library(logic STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/logic/api/api.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/logic/api/api-callbacks.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/logic/button-task/button-task.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/logic/led-task/led-task.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/logic/pi-task/pi-task.c
+)
+
+target_include_directories(logic PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/logic
+)
+
+
+target_link_libraries(logic
+    PUBLIC stdio_text_protocol
+    PRIVATE platform device logging profiling systime
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/logic
+    ${CMAKE_CURRENT_SOURCE_DIR}/platform
+)
+
+
+
+target_link_libraries(${PROJECT_NAME}
+    pico_stdlib
+    pico_unique_id
+    device
+    logging
+    profiling
+    stdio_text_protocol
+    systime
+    logic
+)
+
+# выключатель профилирования: 0 — вызовов секундомеров в образе нет
+target_compile_definitions(profiling PUBLIC
+    PROFILING_ENABLED=1
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    DEVICE_BOARD="${PICO_BOARD}"
+)
+
+
+pico_enable_stdio_usb(${PROJECT_NAME} 1)
+pico_enable_stdio_uart(${PROJECT_NAME} 0)
+pico_add_extra_outputs(${PROJECT_NAME})
