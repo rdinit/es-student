@@ -1,11 +1,10 @@
 
-#include "api.h"
+#include "api/api.h"
 
 #include <stdio.h>
 #include <string.h>
 
 #include "api-commands.h"
-#include "api.h"
 #include "logging/log.h"
 
 
