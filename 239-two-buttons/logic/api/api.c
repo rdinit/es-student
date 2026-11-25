@@ -5,7 +5,6 @@
 #include <string.h>
 
 #include "api-commands.h"
-#include "api.h"
 #include "logging/log.h"
 
 
