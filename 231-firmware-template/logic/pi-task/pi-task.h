@@ -10,4 +10,9 @@ void pi_task_handle(void);
 
 bool pi_task_get_result(double* result, uint64_t* time_ms);
 
-void print_pi_state(void);
+typedef enum {
+  PI_STATE_INIT,
+  PI_STATE_CALC,
+  PI_STATE_DONE,
+} pi_state_t;
+pi_state_t pi_task_get_state(void);

@@ -6,12 +6,6 @@
 
 #include "systime/systime.h"
 
-typedef enum {
-  PI_STATE_INIT,
-  PI_STATE_CALC,
-  PI_STATE_DONE,
-} pi_state_t;
-
 static pi_state_t pi_state = PI_STATE_INIT;
 
 static uint32_t pi_terms;

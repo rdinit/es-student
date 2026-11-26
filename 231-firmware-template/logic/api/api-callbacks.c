@@ -69,12 +69,27 @@ static void cmd_pi_start(const command_t* command) {
 }
 
 static void cmd_pi(const command_t* command) {
-  led_state_t state = led_task_get_state();
-  printf("led: %s, period %u ms\n",
-         state == LED_STATE_OFF  ? "off"
-         : state == LED_STATE_ON ? "on"
-                                 : "blink",
-         (unsigned)led_task_get_period_ms());
+  pi_state_t state = pi_task_get_state();
+  /*
+  Ответ	pi: not started — расчёт не запускался;
+pi: running — расчёт идёт;
+pi: <значение> in <время> ms — расчёт закончен; значение — с 9 знаками после
+точки, время — десятичное число миллисекунд
+*/
+  switch (state) {
+    case PI_STATE_INIT:
+      printf("pi: not started\n");
+      break;
+    case PI_STATE_CALC:
+      printf("pi: running\n");
+    case PI_STATE_DONE:
+      double result;
+      uint64_t time_ms;
+      pi_task_get_result(&result, &time_ms);
+      printf("pi: %f in %f ms\n", result, time_ms);
+    default:
+      break;
+  }
 }
 
 static void cmd_info(const command_t* command) {

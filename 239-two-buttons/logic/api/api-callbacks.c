@@ -12,10 +12,10 @@
 #include "led-task/led-task.h"
 #include "logging/log.h"
 #include "pi-task/pi-task.h"
+#include "platform/platform.h"
 #include "profiling/profiling.h"
 #include "stdio-text-protocol/stdio-text-protocol.h"
 #include "systime/systime.h"
-#include "platform/platform.h"
 
 // Число без знака из десятичной записи. false — в записи не только цифры
 // или число не помещается в uint32_t.
@@ -70,12 +70,27 @@ static void cmd_pi_start(const command_t* command) {
 }
 
 static void cmd_pi(const command_t* command) {
-  led_state_t state = led_task_get_state();
-  printf("led: %s, period %u ms\n",
-         state == LED_STATE_OFF  ? "off"
-         : state == LED_STATE_ON ? "on"
-                                 : "blink",
-         (unsigned)led_task_get_period_ms());
+  pi_state_t state = pi_task_get_state();
+  /*
+  Ответ	pi: not started — расчёт не запускался;
+pi: running — расчёт идёт;
+pi: <значение> in <время> ms — расчёт закончен; значение — с 9 знаками после
+точки, время — десятичное число миллисекунд
+*/
+  switch (state) {
+    case PI_STATE_INIT:
+      printf("pi: not started\n");
+      break;
+    case PI_STATE_CALC:
+      printf("pi: running\n");
+    case PI_STATE_DONE:
+      double result;
+      uint64_t time_ms;
+      pi_task_get_result(&result, &time_ms);
+      printf("pi: %f in %f ms\n", result, time_ms);
+    default:
+      break;
+  }
 }
 
 static void cmd_info(const command_t* command) {
@@ -132,8 +147,7 @@ static void cmd_led_blink(const command_t* command) {
 
 static void cmd_button(const command_t* command) {
   for (int i = 0; i < BUTTON_COUNT; ++i) {
-    printf("button %d: %s, presses %u\n",
-           i + 1,
+    printf("button %d: %s, presses %u\n", i + 1,
            button_task_is_pressed((button_id)i) ? "pressed" : "released",
            (unsigned)button_task_get_press_count((button_id)i));
   }
