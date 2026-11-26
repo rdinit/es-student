@@ -82,11 +82,13 @@ pi: <значение> in <время> ms — расчёт закончен; з�
       break;
     case PI_STATE_CALC:
       printf("pi: running\n");
+      break;
     case PI_STATE_DONE:
       double result;
       uint64_t time_ms;
       pi_task_get_result(&result, &time_ms);
       printf("pi: %f in %f ms\n", result, time_ms);
+      break;
     default:
       break;
   }
